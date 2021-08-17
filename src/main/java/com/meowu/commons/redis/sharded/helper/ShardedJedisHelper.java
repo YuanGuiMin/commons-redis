@@ -25,10 +25,14 @@ public class ShardedJedisHelper{
         assertClient(client);
         assertKey(key);
 
-        if(timeUnit != null && TimeUnit.MILLISECONDS.equals(timeUnit)){
-            client.psetex(key, expire, getValue(value));
+        if(timeUnit != null){
+            if(TimeUnit.MILLISECONDS.equals(timeUnit)){
+                client.psetex(key, expire, getValue(value));
+            }else{
+                client.setex(key, timeUnit.toSeconds(expire), getValue(value));
+            }
         }else{
-            client.setex(key, timeUnit.toSeconds(expire), getValue(value));
+            client.setex(key, TimeUnit.SECONDS.toSeconds(expire), getValue(value));
         }
     }
 
