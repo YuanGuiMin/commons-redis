@@ -111,23 +111,18 @@ public class ShardedJedisHelper{
         return client.exists(key);
     }
 
-    public static long ttl(ShardedJedis client, String key){
-        return ttl(client, key, TimeUnit.SECONDS);
-    }
-
-    public static long ttl(ShardedJedis client, String key, TimeUnit timeUnit){
+    public static long pttl(ShardedJedis client, String key){
         assertClient(client);
         assertKey(key);
 
-        if(timeUnit != null){
-            if(TimeUnit.MILLISECONDS.equals(timeUnit)){
-                return client.pttl(key);
-            }else{
-                return timeUnit.toSeconds(client.ttl(key));
-            }
-        }else{
-            return TimeUnit.SECONDS.toSeconds(client.ttl(key));
-        }
+        return client.pttl(key);
+    }
+
+    public static long ttl(ShardedJedis client, String key){
+        assertClient(client);
+        assertKey(key);
+
+        return client.ttl(key);
     }
 
     public static long incr(ShardedJedis client, String key){
