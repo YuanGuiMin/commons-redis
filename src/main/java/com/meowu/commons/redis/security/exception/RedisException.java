@@ -7,7 +7,7 @@ import java.text.MessageFormat;
 public class RedisException extends MeowuRuntimeException{
 
     public RedisException(){
-        super();
+
     }
 
     public RedisException(String message){

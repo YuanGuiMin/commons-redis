@@ -1,5 +1,6 @@
 package com.meowu.commons.redis.sharded.helper;
 
+import com.meowu.commons.redis.security.exception.RedisException;
 import com.meowu.commons.utils.utils.AssertUtils;
 import com.meowu.commons.utils.utils.GsonUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -63,24 +64,32 @@ public class ShardedJedisHelper{
         return false;
     }
 
-    public static void expire(ShardedJedis client, String key, long seconds){
-        expire(client, key, TimeUnit.SECONDS, seconds);
+    public static long expire(ShardedJedis client, String key, long seconds){
+        return expire(client, key, TimeUnit.SECONDS, seconds);
     }
 
-    public static void expire(ShardedJedis client, String key, TimeUnit timeUnit, long expire){
+    public static long expire(ShardedJedis client, String key, TimeUnit timeUnit, long expire){
         assertClient(client);
         assertKey(key);
+
+        Long result = 0L;
 
         //设置有效时间
         if(timeUnit != null){
             if(TimeUnit.MILLISECONDS.equals(timeUnit)){
-                client.pexpire(key, expire);
+                result = client.pexpire(key, expire);
             }else{
-                client.expire(key, timeUnit.toSeconds(expire));
+                result = client.expire(key, timeUnit.toSeconds(expire));
             }
         }else{
-            client.expire(key, TimeUnit.SECONDS.toSeconds(expire));
+            result = client.expire(key, TimeUnit.SECONDS.toSeconds(expire));
         }
+
+        if(result == 0){
+            throw new RedisException("cannot set the expire time to the key[{0}]", key);
+        }
+
+        return expire;
     }
 
     public static <T> T get(ShardedJedis client, String key, Class<T> clazz){
@@ -115,14 +124,28 @@ public class ShardedJedisHelper{
         assertClient(client);
         assertKey(key);
 
-        return client.pttl(key);
+        Long result = client.pttl(key);
+
+        //校验结果
+        if(result == -2){
+            throw new RedisException("key[{0}] is not exist", key);
+        }
+
+        return result;
     }
 
     public static long ttl(ShardedJedis client, String key){
         assertClient(client);
         assertKey(key);
 
-        return client.ttl(key);
+        Long result = client.ttl(key);
+
+        //校验结果
+        if(result == -2){
+            throw new RedisException("key[{0}] is not exist", key);
+        }
+
+        return result;
     }
 
     public static long incr(ShardedJedis client, String key){
