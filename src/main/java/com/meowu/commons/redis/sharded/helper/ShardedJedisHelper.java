@@ -85,11 +85,7 @@ public class ShardedJedisHelper{
             result = client.expire(key, TimeUnit.SECONDS.toSeconds(expire));
         }
 
-        if(result == 0){
-            throw new RedisException("cannot set the expire time to the key[{0}]", key);
-        }
-
-        return expire;
+        return (result == 0 ? result : expire);
     }
 
     public static <T> T get(ShardedJedis client, String key, Class<T> clazz){
@@ -124,28 +120,14 @@ public class ShardedJedisHelper{
         assertClient(client);
         assertKey(key);
 
-        Long result = client.pttl(key);
-
-        //校验结果
-        if(result == -2){
-            throw new RedisException("key[{0}] is not exist", key);
-        }
-
-        return result;
+        return client.pttl(key);
     }
 
     public static long ttl(ShardedJedis client, String key){
         assertClient(client);
         assertKey(key);
 
-        Long result = client.ttl(key);
-
-        //校验结果
-        if(result == -2){
-            throw new RedisException("key[{0}] is not exist", key);
-        }
-
-        return result;
+        return client.ttl(key);
     }
 
     public static long incr(ShardedJedis client, String key){
