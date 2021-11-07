@@ -40,6 +40,7 @@
             <groupId>com.meowu.commons</groupId>
             <artifactId>commons-utils</artifactId>
             <version>${meowu.commons-utils.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- junit -->

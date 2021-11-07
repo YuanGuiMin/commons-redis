@@ -1,6 +1,5 @@
 package com.meowu.commons.redis.sharded.helper;
 
-import com.meowu.commons.redis.security.exception.RedisException;
 import com.meowu.commons.utils.utils.AssertUtils;
 import com.meowu.commons.utils.utils.GsonUtils;
 import org.apache.commons.lang3.StringUtils;
